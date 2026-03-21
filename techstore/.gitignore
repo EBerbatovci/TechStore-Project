@@ -25,3 +25,6 @@ yarn-error.log*
 .vs/
 bin/
 obj/
+
+WebAPI/WebAPI/bin/
+WebAPI/WebAPI/obj/
