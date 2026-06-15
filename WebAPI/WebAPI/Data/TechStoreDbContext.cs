@@ -15,6 +15,19 @@ public partial class TechStoreDbContext : IdentityDbContext
 
     }
 
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+
+        foreach (var property in builder.Model.GetEntityTypes()
+                     .SelectMany(entityType => entityType.GetProperties())
+                     .Where(property => property.ClrType == typeof(decimal) || property.ClrType == typeof(decimal?)))
+        {
+            property.SetPrecision(18);
+            property.SetScale(2);
+        }
+    }
+
     public DbSet<ContactForm> ContactForm { get; set; }
     public DbSet<KategoriaProduktit> KategoriaProduktit { get; set; }
     public DbSet<KodiZbritjes> KodiZbritjes { get; set; }
