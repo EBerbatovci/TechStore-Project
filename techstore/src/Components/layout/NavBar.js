@@ -16,10 +16,10 @@ import axios from 'axios';
 function NavBar(props) {
   const navigate = useNavigate();
 
-  const [{ cart }, dispatch] = useStateValue();
+  const [{ cart }] = useStateValue();
   const token = localStorage.getItem("token");
   const [teDhenatBiznesit, setTeDhenatBiznesit] = useState([]);
-  const [perditeso, setPerditeso] = useState('');
+  const [perditeso] = useState('');
 
   const getToken = localStorage.getItem("token");
 
@@ -51,12 +51,16 @@ function NavBar(props) {
 
       if (kohaAktive < kohaTanishme) {
         localStorage.removeItem("token");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("refreshTokenExpires");
         localStorage.removeItem("id");
         navigate("/LogIn");
       }
 
       if (id !== decodedToken.id) {
         localStorage.removeItem("token");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("refreshTokenExpires");
         localStorage.removeItem("id");
         navigate("/LogIn");
       }
@@ -65,6 +69,8 @@ function NavBar(props) {
 
   const handleSignOut = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("refreshTokenExpires");
     localStorage.removeItem("id");
   }
 

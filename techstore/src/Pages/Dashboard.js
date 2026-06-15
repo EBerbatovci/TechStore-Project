@@ -206,8 +206,8 @@ const Dashboard = () => {
             <button onClick={handleShfaqPorosite} class="button">
               Porosite e tua
             </button>
-            {(teDhenat && teDhenat.rolet && teDhenat.rolet.includes("Admin") ||
-              teDhenat && teDhenat.rolet && teDhenat.rolet.includes("Menaxher")) && (
+            {teDhenat && teDhenat.rolet && (teDhenat.rolet.includes("Admin") ||
+              teDhenat.rolet.includes("Menaxher")) && (
                 <button class="button" onClick={handleShfaqAdminDashboard}>
                   Admin Dashboard
                 </button>

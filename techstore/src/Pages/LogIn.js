@@ -5,7 +5,7 @@ import Footer from "../Components/layout/Footer";
 import Form from "react-bootstrap/Form";
 import "./Styles/LogIn.css";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
 import {
@@ -25,8 +25,6 @@ const LogIn = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [roles, setRoles] = useState([]);
 
   const [shfaqMesazhin, setShfaqMesazhin] = useState(false);
   const [tipiMesazhit, setTipiMesazhit] = useState("");
@@ -48,14 +46,6 @@ const LogIn = () => {
     setPassword(value);
   }
 
-  useEffect(() => {
-    const loggedUser = localStorage.getItem("user");
-
-    if (loggedUser) {
-      setLoggedIn(true);
-    }
-  });
-
   async function handleLogIn(e) {
     e.preventDefault();
 
@@ -66,9 +56,11 @@ const LogIn = () => {
       }, authentikimi);
 
       if (response.status === 200) {
-        const { token } = response.data;
+        const { token, refreshToken, refreshTokenExpires } = response.data;
 
         localStorage.setItem("token", token);
+        localStorage.setItem("refreshToken", refreshToken);
+        localStorage.setItem("refreshTokenExpires", refreshTokenExpires);
 
         const decodedToken = jwt_decode(token);
 

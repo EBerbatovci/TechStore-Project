@@ -51,14 +51,14 @@ function Produktet(props) {
   const searchItems = (searchValue) => {
     setSearchInput(searchValue);
 
-    if (searchInput !== "") {
+    if (searchValue !== "") {
       const filteredData = produktet.filter((item) => {
         setKateogria("");
         setEmriKompanis("");
         return Object.values(item)
           .join("")
           .toLowerCase()
-          .includes(searchInput.toLowerCase());
+          .includes(searchValue.toLowerCase());
       });
       setFilteredResults(filteredData);
     } else {
