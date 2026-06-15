@@ -24,11 +24,10 @@ namespace TechStoreWebAPI.Controllers
         [Route("shfaqKompanit")]
         public async Task<IActionResult> Get()
         {
-            var kompanite = _context.Kompania
+            var kompanite = await _context.Kompania
                 .Where(k => k.EmriKompanis != null)
-                .AsEnumerable()
-                .OrderBy(k => k.EmriKompanis.ToString())
-                .ToList();
+                .OrderBy(k => k.EmriKompanis)
+                .ToListAsync();
 
             return Ok(kompanite);
         }

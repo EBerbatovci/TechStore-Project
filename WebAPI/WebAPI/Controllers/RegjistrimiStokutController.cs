@@ -133,5 +133,30 @@ namespace WebAPI.Controllers
 
             return NoContent();
         }
+
+        [Authorize(Roles = "Admin")]
+        [HttpDelete]
+        [Route("fshijRegjistrimin")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var regjistrimi = await _context.RegjistrimiStokut
+                .Include(r => r.TeDhenatRegjistrimit)
+                .FirstOrDefaultAsync(r => r.IdRegjistrimit == id);
+
+            if (regjistrimi == null)
+            {
+                return NotFound();
+            }
+
+            if (regjistrimi.TeDhenatRegjistrimit != null)
+            {
+                _context.TeDhenatRegjistrimit.RemoveRange(regjistrimi.TeDhenatRegjistrimit);
+            }
+
+            _context.RegjistrimiStokut.Remove(regjistrimi);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }

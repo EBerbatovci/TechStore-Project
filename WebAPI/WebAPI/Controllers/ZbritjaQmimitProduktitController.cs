@@ -50,6 +50,29 @@ namespace WebAPI.Controllers
         }
 
         [Authorize(Roles = "Admin, Menaxher")]
+        [HttpPut]
+        [Route("perditesoZbritjenProduktit")]
+        public async Task<IActionResult> Put(int id, [FromBody] ZbritjaQmimitProduktit zbritja)
+        {
+            var zbritjaEkzistuese = await _context.ZbritjaQmimitProduktit.FirstOrDefaultAsync(x => x.ProduktiId == id);
+
+            if (zbritjaEkzistuese == null)
+            {
+                return NotFound();
+            }
+
+            zbritjaEkzistuese.QmimiPaZbritjeProduktit = zbritja.QmimiPaZbritjeProduktit;
+            zbritjaEkzistuese.QmimiMeZbritjeProduktit = zbritja.QmimiMeZbritjeProduktit;
+            zbritjaEkzistuese.DataZbritjes = zbritja.DataZbritjes;
+            zbritjaEkzistuese.DataSkadimit = zbritja.DataSkadimit;
+
+            _context.ZbritjaQmimitProduktit.Update(zbritjaEkzistuese);
+            await _context.SaveChangesAsync();
+
+            return Ok(zbritjaEkzistuese);
+        }
+
+        [Authorize(Roles = "Admin, Menaxher")]
         [HttpDelete]
         [Route("fshijZbritjenProduktit")]
         public async Task<IActionResult> Delete(int id)

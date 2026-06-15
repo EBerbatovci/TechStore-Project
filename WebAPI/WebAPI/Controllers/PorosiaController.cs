@@ -168,5 +168,30 @@ namespace TechStoreWebAPI.Controllers
 
             return Ok(porosia);
         }
+
+        [Authorize(Roles = "Admin")]
+        [HttpDelete]
+        [Route("fshijPorosine")]
+        public async Task<IActionResult> Delete(int idPorosia)
+        {
+            var porosia = await _context.Porosit
+                .Include(p => p.TeDhenatEPorosis)
+                .FirstOrDefaultAsync(p => p.IdPorosia == idPorosia);
+
+            if (porosia == null)
+            {
+                return NotFound();
+            }
+
+            if (porosia.TeDhenatEPorosis != null)
+            {
+                _context.TeDhenatEPorosis.RemoveRange(porosia.TeDhenatEPorosis);
+            }
+
+            _context.Porosit.Remove(porosia);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }

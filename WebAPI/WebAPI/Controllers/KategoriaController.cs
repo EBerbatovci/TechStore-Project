@@ -43,11 +43,10 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var kategorit = _context.KategoriaProduktit
+                var kategorit = await _context.KategoriaProduktit
                     .Where(k => k.LlojiKategoris != null)
-                    .AsEnumerable()
-                    .OrderBy(k => k.LlojiKategoris.ToString())
-                    .ToList();
+                    .OrderBy(k => k.LlojiKategoris)
+                    .ToListAsync();
 
                 return Ok(kategorit);
             }
@@ -63,7 +62,7 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> Put(int id, [FromBody] KategoriaProduktit k)
         {
             var kategoria = await _context.KategoriaProduktit.FirstOrDefaultAsync(x => x.KategoriaId == id);
-            if (id < 0)
+            if (id < 0 || kategoria == null)
             {
                 return BadRequest("Kategoria nuk egziston");
             }
@@ -100,6 +99,11 @@ namespace WebAPI.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var kategoria = await _context.KategoriaProduktit.FirstOrDefaultAsync(x => x.KategoriaId == id);
+
+            if (kategoria == null)
+            {
+                return NotFound();
+            }
 
             _context.KategoriaProduktit.Remove(kategoria);
             await _context.SaveChangesAsync();
