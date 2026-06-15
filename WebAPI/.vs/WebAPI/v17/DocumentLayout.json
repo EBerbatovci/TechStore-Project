@@ -1,12 +1,7 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\endri\\OneDrive\\Desktop\\TechStore-Lab1-main\\TechStore-Lab1-main\\WebAPI\\",
-  "Documents": [
-    {
-      "AbsoluteMoniker": "D:0:0:{959F7509-79EC-4E53-B92C-B8F77DB5B898}|WebAPI\\WebAPI.csproj|c:\\users\\endri\\onedrive\\desktop\\techstore-lab1-main\\techstore-lab1-main\\webapi\\webapi\\webapi.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
-      "RelativeMoniker": "D:0:0:{959F7509-79EC-4E53-B92C-B8F77DB5B898}|WebAPI\\WebAPI.csproj|solutionrelative:webapi\\webapi.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
-    }
-  ],
+  "WorkspaceRootPath": "C:\\Users\\endri\\Documents\\Codex\\2026-06-15\\files-mentioned-by-the-user-codex\\outputs\\TechStore-Project-fixed-with-git\\WebAPI\\",
+  "Documents": [],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -14,7 +9,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": -1,
           "Children": [
             {
               "$type": "Bookmark",
@@ -31,19 +26,6 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{e506b91c-c606-466a-90a9-123d1d1e12b3}"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "WebAPI.csproj",
-              "DocumentMoniker": "C:\\Users\\endri\\OneDrive\\Desktop\\TechStore-Lab1-main\\TechStore-Lab1-main\\WebAPI\\WebAPI\\WebAPI.csproj",
-              "RelativeDocumentMoniker": "WebAPI\\WebAPI.csproj",
-              "ToolTip": "C:\\Users\\endri\\OneDrive\\Desktop\\TechStore-Lab1-main\\TechStore-Lab1-main\\WebAPI\\WebAPI\\WebAPI.csproj",
-              "RelativeToolTip": "WebAPI\\WebAPI.csproj",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAABcAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
-              "WhenOpened": "2026-03-19T00:51:52.659Z",
-              "EditorCaption": ""
             }
           ]
         }
