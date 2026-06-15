@@ -16,7 +16,7 @@ Llogaritë për qasje
 Email	                    Password	               Roli
 
 admin@techstore.com       Admin1@	             Administrator
-menaxher@techstore.com    Menaxher1@	          Menaxher
+menagjer@techstore.com    Menagjer1@	          Menagjer
 user@techstore.com         User1@	                Klient
 
 Shembujt e pamjes se TechStore
