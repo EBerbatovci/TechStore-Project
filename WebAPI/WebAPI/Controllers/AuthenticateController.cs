@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Collections.Concurrent;
+using System.Security.Cryptography;
 using System.Security.Claims;
 using System.Text;
 using WebAPI.Auth;
@@ -17,6 +19,7 @@ namespace WebAPI.Controllers
     [ApiController]
     public class AuthenticateController : ControllerBase
     {
+        private static readonly ConcurrentDictionary<string, StoredRefreshToken> RefreshTokens = new();
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IConfiguration _configuration;
         private readonly TechStoreDbContext _context;
@@ -148,10 +151,15 @@ namespace WebAPI.Controllers
                 var roles = await _userManager.GetRolesAsync(useri_ekziston);
 
                 var jwtToken = GenerateJwtToken(useri_ekziston, roles);
+                var refreshToken = GenerateRefreshToken();
+                var refreshTokenExpires = DateTime.UtcNow.AddDays(7);
+                RefreshTokens[refreshToken] = new StoredRefreshToken(useri_ekziston.Id, refreshTokenExpires);
 
                 return Ok(new AuthResults()
                 {
                     Token = jwtToken,
+                    RefreshToken = refreshToken,
+                    RefreshTokenExpires = refreshTokenExpires,
                     Result = true
                 });
             }
@@ -163,6 +171,74 @@ namespace WebAPI.Controllers
                     "Inavlid Payload"
                 }
             });
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("refresh")]
+        public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequest request)
+        {
+            if (request == null || string.IsNullOrWhiteSpace(request.Token) || string.IsNullOrWhiteSpace(request.RefreshToken))
+            {
+                return BadRequest(new AuthResults
+                {
+                    Result = false,
+                    Errors = new List<string> { "Token and refresh token are required." }
+                });
+            }
+
+            var principal = GetPrincipalFromExpiredToken(request.Token);
+            var userId = principal?.Claims.FirstOrDefault(c => c.Type == "id")?.Value;
+
+            if (string.IsNullOrWhiteSpace(userId) ||
+                !RefreshTokens.TryGetValue(request.RefreshToken, out var storedToken) ||
+                storedToken.UserId != userId ||
+                storedToken.ExpiresUtc <= DateTime.UtcNow)
+            {
+                return Unauthorized(new AuthResults
+                {
+                    Result = false,
+                    Errors = new List<string> { "Invalid or expired refresh token." }
+                });
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return Unauthorized(new AuthResults
+                {
+                    Result = false,
+                    Errors = new List<string> { "User no longer exists." }
+                });
+            }
+
+            RefreshTokens.TryRemove(request.RefreshToken, out _);
+            var roles = await _userManager.GetRolesAsync(user);
+            var newJwtToken = GenerateJwtToken(user, roles);
+            var newRefreshToken = GenerateRefreshToken();
+            var refreshTokenExpires = DateTime.UtcNow.AddDays(7);
+            RefreshTokens[newRefreshToken] = new StoredRefreshToken(user.Id, refreshTokenExpires);
+
+            return Ok(new AuthResults
+            {
+                Token = newJwtToken,
+                RefreshToken = newRefreshToken,
+                RefreshTokenExpires = refreshTokenExpires,
+                Result = true
+            });
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("revoke")]
+        public IActionResult Revoke([FromBody] RefreshTokenRequest request)
+        {
+            if (!string.IsNullOrWhiteSpace(request?.RefreshToken))
+            {
+                RefreshTokens.TryRemove(request.RefreshToken, out _);
+            }
+
+            return NoContent();
         }
 
         [Authorize(Roles = "Admin, Menaxher")]
@@ -356,7 +432,8 @@ namespace WebAPI.Controllers
         {
             var jwtTokenHandler = new JwtSecurityTokenHandler();
 
-            var key = Encoding.UTF8.GetBytes(_configuration.GetSection("JwtConfig:Secret").Value);
+            var secret = _configuration["JWT_SECRET"] ?? _configuration.GetSection("JwtConfig:Secret").Value;
+            var key = Encoding.UTF8.GetBytes(secret);
 
             // Token descriptor
             var TokenDescriptor = new SecurityTokenDescriptor()
@@ -385,6 +462,46 @@ namespace WebAPI.Controllers
 
             return jwtToken;
         }
+
+        private ClaimsPrincipal? GetPrincipalFromExpiredToken(string token)
+        {
+            var secret = _configuration["JWT_SECRET"] ?? _configuration.GetSection("JwtConfig:Secret").Value;
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateAudience = false,
+                ValidateIssuer = false,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
+                ValidateLifetime = false
+            };
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            try
+            {
+                var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
+                if (securityToken is not JwtSecurityToken jwtSecurityToken ||
+                    !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    return null;
+                }
+
+                return principal;
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        private static string GenerateRefreshToken()
+        {
+            var randomBytes = new byte[64];
+            using var rng = RandomNumberGenerator.Create();
+            rng.GetBytes(randomBytes);
+            return Convert.ToBase64String(randomBytes);
+        }
+
+        private record StoredRefreshToken(string UserId, DateTime ExpiresUtc);
 
     }
 

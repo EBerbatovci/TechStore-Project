@@ -19,6 +19,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 ConfigurationManager configuration = builder.Configuration;
+var jwtSecret = configuration["JWT_SECRET"] ?? configuration["JwtConfig:Secret"];
+
+if (string.IsNullOrWhiteSpace(jwtSecret) || jwtSecret.Length < 32)
+{
+    throw new InvalidOperationException("JWT secret is missing or too short. Set JWT_SECRET or JwtConfig:Secret to at least 32 characters.");
+}
 
 
 builder.Services.AddControllers().AddJsonOptions(options =>
@@ -43,7 +49,7 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(jwt =>
 {
-    var key = Encoding.ASCII.GetBytes(builder.Configuration.GetSection("JwtConfig:Secret").Value);
+    var key = Encoding.ASCII.GetBytes(jwtSecret);
 
     jwt.SaveToken = true;
     jwt.TokenValidationParameters = new TokenValidationParameters()
@@ -52,7 +58,7 @@ builder.Services.AddAuthentication(options =>
         IssuerSigningKey = new SymmetricSecurityKey(key),
         ValidateIssuer = false, // for development 
         ValidateAudience = false, // for development
-        RequireExpirationTime = false, // for development -- needs to be updated when reffresh token is added
+        RequireExpirationTime = true,
         ValidateLifetime = true
     };
 });
@@ -61,7 +67,7 @@ builder.Services.AddCors(opt =>
 {
     opt.AddPolicy(name: "CorsPolicy", builder =>
     {
-        builder.AllowAnyOrigin()
+        builder.WithOrigins(configuration.GetSection("AllowedOrigins").Get<string[]>() ?? new[] { "http://localhost:3000", "https://localhost:3000" })
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
