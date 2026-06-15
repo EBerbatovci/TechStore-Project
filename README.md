@@ -1,45 +1,94 @@
-<img width="665" height="375" alt="logo" src="https://github.com/user-attachments/assets/834888fb-343c-4cb1-b5aa-8e9219cdeaa1" />
-Rreth Projektit
+# TechStore Project
 
-Ky projekt është realizuar në kuadër të lëndës Lab Kurs 1.
+TechStore is an e-commerce web application for selling technology products. It was built for Lab Course 1.
 
-TechStore është një aplikacion e-Commerce për shitjen online të pajisjeve teknologjike.
+## Technology Stack
 
-Teknologjitë e përdorura:
+- Frontend: React JS, React Bootstrap, MDB React UI Kit
+- Backend: ASP.NET Core Web API
+- Authentication: ASP.NET Core Identity, JWT, refresh-token workflow
+- Database: SQL Server, Entity Framework Core migrations
+- Documentation: Swagger and Markdown API docs
 
-React JS – Frontend
-ASP.NET Core – Backend
-SQL Server – Database
--------------------------------------
-Llogaritë për qasje
--------------------------------------
-Email	                    Password	               Roli
+## Main Features
 
-admin@techstore.com       Admin1@	             Administrator
-menaxher@techstore.com    Menaxher1@	          Menaxher
-user@techstore.com         User1@	                Klient
+- Public product catalog with product search, category filtering and company filtering.
+- User registration and login.
+- JWT authorization with role-based access for `Admin`, `Menaxher` and `User`.
+- Refresh-token endpoint and token revocation endpoint.
+- Customer cart, checkout, orders and invoice view.
+- Admin dashboard for products, categories, companies, users, roles, orders, discounts, messages, stock registration and statistics.
+- SQL Server schema managed with EF Core migrations.
 
-Shembujt e pamjes se TechStore
+## Demo Accounts
 
-Home
-<img width="1215" height="1567" alt="Home" src="https://github.com/user-attachments/assets/1b696168-002b-42cd-90b7-b9bf9e6b94c0" />
-Faqja e Produktit
-<img width="3500" height="1380" alt="FaqjaProduktit" src="https://github.com/user-attachments/assets/ce5f9568-f775-4e53-8d3c-84216bc91275" />
-Fatura
-<img width="1973" height="1704" alt="Fatura" src="https://github.com/user-attachments/assets/66d5cbce-754f-40bc-a0ed-64ed920f31b5" />
-Filtrimi produktit kategori
-<img width="3522" height="1802" alt="FiltrimiProdukteveKategori" src="https://github.com/user-attachments/assets/3c576922-da4b-463b-9d6b-505db4a1a3f6" />
-Perditsimi i t'dhanave
-<img width="1345" height="1562" alt="PerditesimiTeDhenave" src="https://github.com/user-attachments/assets/8b8b0fe9-12a7-476a-9fc3-398c7eeecea5" />
-Porosite e Mia
-<img width="1417" height="1577" alt="PorositEMia" src="https://github.com/user-attachments/assets/a2033bf7-b777-4d41-89c4-a9ed30e4ee41" />
-Statistikat e dyqanit
-<img width="797" height="1575" alt="StatistikatDyqanit" src="https://github.com/user-attachments/assets/32fc8226-ebd7-4a2e-8aa4-d561cb46d3ab" />
-SignUp forma
-<img width="1915" height="1567" alt="SignUpForma" src="https://github.com/user-attachments/assets/af4a4623-ed4e-49b1-ad03-d1326799d2bf" />
-Konfirmimi porosise
-<img width="2442" height="1525" alt="KonfirmimiPorosis" src="https://github.com/user-attachments/assets/42954b62-3434-4b00-9044-ade135e9fb32" />
-Kalkulimi mallit 
-<img width="1625" height="1567" alt="KalkulimiMallit" src="https://github.com/user-attachments/assets/5b69d917-2fdd-42c2-8d9a-acb4cdf57d39" />
+| Email | Password | Role |
+| --- | --- | --- |
+| admin@techstore.com | Admin1@ | Administrator |
+| menaxher@techstore.com | Menaxher1@ | Menaxher |
+| user@techstore.com | User1@ | Klient |
 
+## Run The Project
 
+Detailed setup steps are in:
+
+```text
+docs/RUNNING.md
+```
+
+Short version:
+
+```powershell
+cd WebAPI/WebAPI
+dotnet restore
+dotnet ef database update
+dotnet run
+```
+
+```powershell
+cd techstore
+npm install
+npm start
+```
+
+Backend:
+
+```text
+https://localhost:7285
+```
+
+Frontend:
+
+```text
+http://localhost:3000
+```
+
+Swagger:
+
+```text
+https://localhost:7285/swagger
+```
+
+## Documentation
+
+- API documentation: `docs/API.md`
+- Running instructions: `docs/RUNNING.md`
+- Trello/project-management evidence checklist: `docs/PROJECT_MANAGEMENT.md`
+- Generated database schema script: `Databaza/TechStoreDB_schema.sql`
+- Original exported data script: `Databaza/TechStoreDB.sql`
+
+## Lab Course 1 Checklist
+
+| Requirement | Status |
+| --- | --- |
+| Git usage | Repository history exists; root `.gitignore` added to prevent build-output pollution. |
+| Trello usage | Add Trello board link/screenshots in `docs/PROJECT_MANAGEMENT.md` before submission. |
+| Backend API | ASP.NET Core Web API with CRUD endpoints and Swagger. |
+| Frontend | React app with Bootstrap-based UI and admin dashboard. |
+| Database | SQL Server with EF Core migrations and generated schema SQL. |
+| Security | JWT, Identity roles, refresh-token endpoint, revoke endpoint, restricted CORS origins. |
+| Documentation | README, API docs and running guide included. |
+
+## Security Notes
+
+For local development, the project can use `JwtConfig:Secret` from `appsettings.json`. For a real deployment or public hosting, set a strong `JWT_SECRET` environment variable and do not commit production secrets.
